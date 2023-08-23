@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  increment,
-  incrementByAmount,
-  selectCount,
-} from './counterSlice';
+import {Orderadd} from './orderSlice';
 
 
 export default function Proudctlist() {

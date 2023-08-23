@@ -1,56 +1,98 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import Home from './Page/home';
+import SignupPage from './Page/SignupPage';
+import LoginPage from './Page/LoginPage';
+import CardPage from './Page/CardPage';
+import Checkoutpage from './Page/Checkoutpage';
+import Productdetails from './Page/productdetails';
+import PageNoteFound from './Page/PageNoteFound';
+import Protected from './features/auth/Compontes/protected';
+import {FetchItemByUsesrIDAsync} from './features/Card/CardSlice';
+import {selectLoggedInUser} from './features/auth/Compontes/authSlice';
+import OrderSuccess from './Page/order_successful';
 import './App.css';
 
+import { createRoot } from "react-dom/client";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Route,
+  Link,
+} from "react-router-dom";
+
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+      <Protected>
+          <Home></Home>
+      </Protected>
+    
+    ),
+  },
+  {
+    path: "/Login",
+    element:(<LoginPage></LoginPage>),
+  },
+  // Testing
+  {
+    path: "/Card",
+    element:(<Protected><CardPage></CardPage></Protected>),
+  },
+  {
+    path: "/Signup",
+    element:(<SignupPage></SignupPage>),
+  },
+  {
+    path: "/Checkout",
+    element:(<Protected><Checkoutpage></Checkoutpage></Protected>),
+  },
+  {
+    path: "/Productdetails/:id",
+    element:(
+    <Protected> <Productdetails></Productdetails> </Protected>
+   ),
+  },
+  {
+    path: "/OrderSuccess/:id",
+    element:(
+    <Protected> <OrderSuccess></OrderSuccess> </Protected>
+   ),
+  },
+  {
+    path: "*",
+    element:(
+    <PageNoteFound></PageNoteFound> 
+   ),
+  },
+]);
+
+
+
+
+
+
+
+
+
 function App() {
+  const dispatch = useDispatch();
+  const user = useSelector(selectLoggedInUser);
+ 
+  
+    useEffect(()=>{
+      if(user){
+        dispatch (FetchItemByUsesrIDAsync(user.id))
+      }
+    
+    },[dispatch,user])
+  
+  
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+     <RouterProvider router={router} />
     </div>
   );
 }
